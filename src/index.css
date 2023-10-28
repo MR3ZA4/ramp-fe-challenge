@@ -88,11 +88,13 @@ hr.RampBreak--l {
   border: 1px solid var(--color-light-shade);
   border-bottom: 1px solid var(--color-text);
   cursor: pointer;
+  
 }
 
+/*Bug 1*/
 .RampInputSelect--dropdown-container {
   display: none;
-  position: fixed;
+  position: absolute; /* Modified to absolute */
   width: 100%;
   max-width: 700px;
   border: 1px solid var(--color-darker-shade);

@@ -19,7 +19,37 @@ export function App() {
     [paginatedTransactions, transactionsByEmployee]
   )
 
-  const loadAllTransactions = useCallback(async () => {
+  
+// Function to synchronize transaction approval states between datasets.
+const toggleTransactionApproval = useCallback((transactionId: string, newValue: boolean) => {
+    const updateTransactions = (transactions: Transaction[] | null) => {
+        return transactions?.map(t => 
+            t.id === transactionId ? { ...t, approved: newValue } : t
+        ) || null;
+    };
+
+    // Update the transaction's approval state in both paginatedTransactions and transactionsByEmployee datasets.
+    setPaginatedTransactions(prev => updateTransactions(prev));
+    setTransactionsByEmployee(prev => updateTransactions(prev));
+
+    // TODO: Send the update to the server (this can be done asynchronously).
+}, []);
+
+
+const loadAllTransactions = useCallback(async () => {
+    setIsLoading(true);
+    await paginatedTransactionsUtils.fetchAll();
+    setIsLoading(false);
+}, [paginatedTransactionsUtils]);
+
+const loadTransactionsByEmployee = useCallback(
+    async (employeeId: string) => {
+        await transactionsByEmployeeUtils.fetchById(employeeId);
+    },
+    [transactionsByEmployeeUtils]
+);
+
+const loadAllTransactions = useCallback(async () => {
     setIsLoading(true)
     transactionsByEmployeeUtils.invalidateData()
 
